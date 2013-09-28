@@ -1,0 +1,17 @@
+{% extends "site_base.html" %}
+{% block title %}{{ page.name }}{% endblock %}
+{% block main_content %}
+<h1>#{{ tag }}</h1>
+<table class="table table-striped">
+
+        <tbody>
+{% for page in pages%}
+          <tr>
+            <td><a href="{% url "view_page" page.slug %}">{{page.name}}</a></td>
+          </tr>
+        
+{% endfor %}
+</tbody>
+      </table>
+
+{% endblock %}

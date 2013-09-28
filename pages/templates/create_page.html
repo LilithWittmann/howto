@@ -1,0 +1,36 @@
+{% extends "site_base.html" %}
+{% block title %}ohai{% endblock %}
+{% block main_content %}
+<form role="form">
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input data-field="item-name" type="text" class="form-control" id="name" placeholder="">
+  </div>
+  <div class="form-group">
+    <label for="tags">Tags</label>
+    <input data-field="item-tags" type="text" class="form-control" id="tags" placeholder="Foo, Bar">
+  </div>
+
+  <div class="steps row" id="arguments">
+		
+  </div>
+
+	<div class="row steps">
+	  	<div class="col-md-8 col-md-offset-1" id="add-step">
+			  <div class="form-group">
+			    <label for="Title">Title</label>
+			    <input data-field="item-title" type="text" class="form-control" id="Title" placeholder="">
+			  </div>
+			 <div class="form-group">
+			    <label for="text">Text</label>
+			    <textarea data-field="item-text" class="form-control" id="tags"></textarea>
+			  </div>
+			<a data-action="add-point" class="btn btn-default">add</a>
+		</div>
+
+	</div>
+
+
+  <a data-action="save-page" class="btn btn-default">Submit</a>
+</form>
+{% endblock %}

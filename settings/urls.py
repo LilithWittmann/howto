@@ -7,6 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'shared.views.home', name='home'),
+    url(r'^js_templates.mustache$', 'shared.views.js_templates', name="js_templates"),
     # url(r'^settings/', include('settings.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
@@ -14,4 +15,6 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^pages/', include('pages.urls')),
+
 )

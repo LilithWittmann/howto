@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     # 
     'shared',
+    'pages',
 )
 
 # A sample logging configuration. The only tangible logging

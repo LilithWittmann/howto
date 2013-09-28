@@ -11,3 +11,6 @@ from django.contrib.auth.decorators import login_required
 def home(request):
     db = get_database()
     return TemplateResponse(request, 'home.html')
+
+def js_templates(request):
+    return TemplateResponse(request, 'js_templates.html')
