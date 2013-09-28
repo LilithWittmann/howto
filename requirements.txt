@@ -1,2 +1,3 @@
 django
 pymongo
+django_mongokit
