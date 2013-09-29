@@ -135,6 +135,7 @@ INSTALLED_APPS = (
     # 
     'shared',
     'pages',
+    'django.contrib.markup',
 )
 
 # A sample logging configuration. The only tangible logging

@@ -1,21 +1,23 @@
 {% extends "site_base.html" %}
 {% block title %}{{ page.name }}{% endblock %}
+{% load markup %}
+{% load page_tags %}
 {% block main_content %}
 <h1>{{ page.name }}</h1>
 <div class="steps row" id="arguments">
 	{% for item in page.items %}
-		<div class="step col-md-8 col-md-offset-1">
-	    <h2>{{ item.title }}</h2>
-	    <p>
-	    {{ item.text }}
-	    </p>
-	</div>  
+		<div data-display="false" class="step col-md-8 col-md-offset-1">
+		    <h2 data-action="display-tip">{{ item.title }}</h2>
+		    <div class="text hidden">
+		    {{ item.text|taggify|markdown }}
+		    </div>
+		</div>  
 	{% endfor %}	
 </div>
 
 <h4>Tags</h4>
 {% for tag in page.tags %}
-<a href="{% url "view_tags" tag %}">{{tag}}</a>,
+<a href="/pages/tags/{{ tag }}">{{tag}}</a>,
 {% endfor %}
 
 {% endblock %}

@@ -7,14 +7,36 @@
 
 
 <script class="template" type="text/html" data-name="form-argument">
-<div class="step col-md-8 col-md-offset-1">
-    <h2><% title %></h2>
-    <p>
-    <% text %>
-    </p>
-</div>      
-</div>
+
+<div class="step-wrapper">
+    <div data-id="<% id %>" class="step col-md-8 col-md-offset-1">
+        <h2 data-field="item-title"><% title %></h2>
+        <p data-field="item-text"> 
+        <% text %>
+        </p>
+
+        <a data-action="edit-step">edit</a>
+    </div>
+</div>   
     
+</script>
+
+
+<script class="template" type="text/html" data-name="edit-argument">
+    <div class="row steps" id="edit-step">
+        <div data-id="<% id %>" class="col-md-8 col-md-offset-1" id="edit-step">
+              <div class="form-group">
+                <label for="Title">Title</label>
+                <input data-field="item-title" type="text" class="form-control" id="Title" placeholder="" value="<% title %>">
+              </div>
+             <div class="form-group">
+                <label for="text">Text</label>
+                <textarea data-field="item-text" class="form-control" id="tags"><% text %></textarea>
+              </div>
+            <a data-action="edit-save-step" class="btn btn-default">edit</a>
+        </div>
+
+    </div>
 </script>
 
 </body>

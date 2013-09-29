@@ -203,15 +203,17 @@
             
         },
 
-        add_point: function(){
+        add_step: function(element){
 
+            var $element = $(element).parent();
             var data = {};
-            data.title = $("[data-field=item-title]").val();
-            $("[data-field=item-title]").val('');
-            data.text = $("[data-field=item-text]").val();
-            $("[data-field=item-text]").val('');
+            data.title = $element.find("[data-field=item-title]").val();
+            $element.find("[data-field=item-title]").val('');
+            data.text = $element.find("[data-field=item-text]").val();
+            $element.find("[data-field=item-text]").val('');
 
             this.data.items.push(data);
+            data.id = this.data.items.length - 1;
             this.render(data);
 
         },
@@ -221,27 +223,73 @@
         },
 
         save: function(){
-
             this.data.tags = $("[data-field=item-tags]").val().split(", ");
             this.data.name = $("[data-field=item-name]").val();
             var resp = ajax.request("/pages/create/ajax", "POST", this.data);
             window.location = "/pages/"+resp.content.slug;
-            console.log(this.data);
+        },
 
 
+        edit_step: function(element){
+
+            var $element = $(element).parent();
+            console.log($element);
+            console.log($element.find("[data-field=item-title]"));
+            var obj = {
+                "title": $element.find("[data-field=item-title]").text(),
+                "id": $element.data("id"),
+                "text": $element.find("[data-field=item-text]").text()
+            }
+            console.log(obj);
+            $element.parent().append(mustache.render("edit-argument", obj));
+            this.bind();
+
+        },
+
+
+        save_edit_step: function(element){
+
+            var $element = $(element).parent();
+            console.log($element.data("id"));
+            this.data.items[$element.data("id")] = {
+                "text": $element.find("[data-field=item-text]").val(),
+                "title": $element.find("[data-field=item-title]").val(),
+            }
+
+            var $obj_view = $element.parent().parent();
+            $obj_view.find("[data-field=item-title]").text($element.find("[data-field=item-title]").val());
+            $obj_view.find("[data-field=item-text]").text($element.find("[data-field=item-text]").val());
+            $element.parent().remove();
         },
 
         bind: function(){
             var that = this;
-            $("a[data-action=add-point]").on("click",function(){
-               console.log("add-point");
-               that.add_point();
+
+
+            $("a[data-action=add-step]").unbind();
+            $("a[data-action=add-step]").on("click",function(){
+               console.log("add-step");
+               that.add_step(this);
+               that.bind();
             });
 
+            $("a[data-action=save-page]").unbind();
             $("a[data-action=save-page]").on("click",function(){
                console.log("save-page");
                that.save();
-               return false;
+            });
+
+            $("a[data-action=edit-step]").unbind();
+            $("a[data-action=edit-step]").on("click",function(){
+               console.log("edit-step");
+               that.edit_step(this);
+            });
+
+
+            $("a[data-action=edit-save-step]").unbind();
+            $("a[data-action=edit-save-step]").on("click",function(){
+               console.log("edit-save-step");
+               that.save_edit_step(this);
             });
 
         }
@@ -249,6 +297,33 @@
     }
 
     
+
+    var page_view = {
+        init: function(){
+
+        },
+        bind: function(){
+
+            $("[data-action=display-tip]").on("click", function(e){
+                console.log("[data-action=display-tip]");
+                var $this = $(e.target).parent();
+                console.log($this.data("display"));
+                if($this.data("display") == false||$this.data("display") == "false")
+                {
+                    $this.data("display", true);
+                    $this.find(".text").removeClass("hidden");
+
+
+                }
+                else
+                {
+                    $this.data("display", false);
+                    $this.find(".text").addClass("hidden");
+                }
+            });
+
+        }
+    }
 
     $document.ready(function () {
 
@@ -260,6 +335,8 @@
         mustache.bind();
         page_form.init("#arguments");
         page_form.bind();
+        page_view.init();
+        page_view.bind();
 
     });
 
