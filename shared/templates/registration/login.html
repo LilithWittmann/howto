@@ -1,0 +1,34 @@
+{% extends "site_base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block main_content %}
+<h1>Login</h1>
+
+
+
+<div class="row row-fluid">
+<div class="col-lg-6">
+<form class="form-horizontal" role="form" method="post">
+{% csrf_token %}
+  <div class="form-group">
+    <label for="inputEmail1" class="col-lg-2 control-label">Nutzername:  </label>
+    <div class="col-lg-10">
+      <input  name="{{ form.username.html_name }}" type="text" class="form-control" id="inputEmail1" placeholder="Nutzername">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputPassword1" class="col-lg-2 control-label">Passwort</label>
+    <div class="col-lg-10">
+      <input name="{{ form.password.html_name }}" type="password" class="form-control" id="inputPassword1" placeholder="Passwort">
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-lg-offset-2 col-lg-10">
+      <button type="submit" class="btn btn-default">Sign in</button>
+    </div>
+  </div>
+</form>
+</div>
+</div>
+
+{% endblock %}

@@ -17,7 +17,7 @@
 
 <h4>Tags</h4>
 {% for tag in page.tags %}
-<a href="/pages/tags/{{ tag }}">{{tag}}</a>,
+<a href="{% url 'view_tags' tag %}">{{tag}}</a>,
 {% endfor %}
 
 {% endblock %}

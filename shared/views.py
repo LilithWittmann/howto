@@ -7,7 +7,6 @@ import random
 from django.contrib.auth.decorators import login_required
 
 
-@login_required
 def home(request):
     db = get_database()
     pages = db.pages.find()

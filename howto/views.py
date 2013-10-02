@@ -19,7 +19,6 @@ def create_view(request):
 
 
 
-@login_required
 def view(request, slug):
     db = get_database()
     page = db.pages.find_one({"slug": slug})
@@ -52,6 +51,33 @@ def create_page(request):
         'slug': post_data["slug"]
     }
     return HttpResponse(json.dumps(resp), content_type='application/json')
+
+
+@login_required
+@require_http_methods(["POST"])
+def edit_page(request):
+    if not request.is_ajax():
+        return HttpResponse(status=400, content="Only ajax requests are accepted here")
+
+
+    db = get_database()
+    try:
+        post_data = json.loads(request.body)
+    except ValueError:
+        resp = {'status': 'error', 'message': "Unable to parse json"}
+        return HttpResponse(json.dumps(resp), content_type='application/json', status=400)
+
+    post_data["id"]
+    db.pages.save(post_data)
+
+    resp = {
+        'status': 'ok',
+        'message': 'Saved... Thanks!',
+        'slug': post_data["slug"]
+    }
+    return HttpResponse(json.dumps(resp), content_type='application/json')
+
+
 
 
 @login_required

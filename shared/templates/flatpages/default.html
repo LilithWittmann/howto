@@ -1,0 +1,12 @@
+{% extends "site_base.html" %}
+{% block title %}{{ flatpage.title }}{% endblock %}
+{% block main_content %}
+{% load markup %}
+
+<h1>{{ flatpage.title }}</h1>
+<div class="row row-fluid">
+	<div class="col-md-12">
+		{{ flatpage.content|markdown }}
+	</div>
+</div>
+{% endblock %}

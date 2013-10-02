@@ -1,3 +1,6 @@
 django
 pymongo
 django_mongokit
+django-tinymce
+django-flatpages-tinymce
+django-registration
