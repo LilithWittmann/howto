@@ -8,5 +8,5 @@ register = template.Library()
 
 @register.filter(name='taggify')
 def taggify(value):
-    return mark_safe(re.sub(r"#(?P<ht>([a-zA-Z0-9_])+)", r"<a href='/pages/tags/\g<ht>' target='_blank'>#\g<ht></a>", value))
+    return mark_safe(re.sub(r"#(?P<ht>([a-zA-Z0-9_])+)", r"<a href='/howto/tags/\g<ht>' target='_blank'>#\g<ht></a>", value))
 taggify.mark_safe=True
