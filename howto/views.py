@@ -122,6 +122,7 @@ def edit_page(request):
     del page["change_reason"]
     page["items"] = post_data["items"]
     page["tags"] = post_data["tags"]
+    page["name"] = post_data["name"]
     page["user"] = request.user.id
     page["_id"] = ObjectId(post_data["id"])
 

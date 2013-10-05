@@ -3,7 +3,7 @@
 {% load markup %}
 {% load page_tags %}
 {% block main_content %}
-<h1>{{ page.name }} {% if user.is_authenticated %} <a href="{% url "edit_page_view" page.slug %}"> <i class="icon-pencil "></i></a> {% endif %}</h1>
+<h1>{{ page.name }} {% if user.is_authenticated %} <a style="text-decoration: none;" href="{% url "edit_page_view" page.slug %}"> <i class="icon-pencil "></i></a> {% endif %}</h1>
 <div class="steps row" id="arguments">
 	{% for item in page.items %}
 		<div data-display="false" class="step col-md-8 col-md-offset-1">
