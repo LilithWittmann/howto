@@ -185,7 +185,7 @@
     };
 
 
-    var page_form = {
+    var page_create_form = {
 
 
         settings: null,
@@ -200,6 +200,10 @@
 
         init: function (id) {
             this.$div =  $(id);
+            if($("#page-data").data("page") == "create")
+            {
+                page_create_form.bind();
+            }
             
         },
 
@@ -225,8 +229,145 @@
         save: function(){
             this.data.tags = $("[data-field=item-tags]").val().split(", ");
             this.data.name = $("[data-field=item-name]").val();
-            var resp = ajax.request("/pages/create/ajax", "POST", this.data);
-            window.location = "/pages/"+resp.content.slug;
+            var resp = ajax.request("/howto/create/ajax", "POST", this.data);
+            window.location = "/howto/"+resp.content.slug;
+        },
+
+
+        edit_step: function(element){
+
+            var $element = $(element).parent();
+            console.log($element);
+            console.log($element.find("[data-field=item-title]"));
+            var obj = {
+                "title": $element.find("[data-field=item-title]").text(),
+                "id": $element.data("id"),
+                "text": $element.find("[data-field=item-text]").text()
+            }
+            console.log(obj);
+            $element.parent().append(mustache.render("edit-argument", obj));
+            this.bind();
+
+        },
+
+
+        save_edit_step: function(element){
+
+            var $element = $(element).parent();
+            console.log($element.data("id"));
+            this.data.items[$element.data("id")] = {
+                "text": $element.find("[data-field=item-text]").val(),
+                "title": $element.find("[data-field=item-title]").val(),
+            }
+
+            var $obj_view = $element.parent().parent();
+            $obj_view.find("[data-field=item-title]").text($element.find("[data-field=item-title]").val());
+            $obj_view.find("[data-field=item-text]").text($element.find("[data-field=item-text]").val());
+            $element.parent().remove();
+        },
+
+        bind: function(){
+            var that = this;
+
+
+            $("a[data-action=add-step]").unbind();
+            $("a[data-action=add-step]").on("click",function(){
+               console.log("add-step");
+               that.add_step(this);
+               that.bind();
+            });
+
+            $("a[data-action=save-page]").unbind();
+            $("a[data-action=save-page]").on("click",function(){
+               console.log("save-page");
+               that.save();
+            });
+
+            $("a[data-action=edit-step]").unbind();
+            $("a[data-action=edit-step]").on("click",function(){
+               console.log("edit-step");
+               that.edit_step(this);
+            });
+
+
+            $("a[data-action=edit-save-step]").unbind();
+            $("a[data-action=edit-save-step]").on("click",function(){
+               console.log("edit-save-step");
+               that.save_edit_step(this);
+            });
+
+        }
+
+    }
+
+    
+
+
+    var page_edit_form = {
+
+
+        settings: null,
+        templates: {},
+        $div: null,
+        modal: null,
+        data: {
+            "items": [],
+            "name": null,
+            "tags": []
+        },
+
+        init: function (id) {
+            this.$div =  $(id);
+            if($("#page-data").data("page") == "edit")
+            {
+
+                var page = $("#page-data").data("object");
+                var i;
+                console.log(page);
+                $("[data-field=item-name]").val(page.name);
+                $("[data-field=item-tags]").val(page.tags.join(", "));
+                for(i in page.items)
+                {
+                    this.data.items.push(page.items[i]);
+                    page.items[i].id = this.data.items.length - 1;
+                    this.render(page.items[i]);
+                }
+
+                page_edit_form.bind();
+            }
+            
+            
+        },
+
+        add_step: function(element){
+
+            var $element = $(element).parent();
+            var data = {};
+            data.title = $element.find("[data-field=item-title]").val();
+            $element.find("[data-field=item-title]").val('');
+            data.text = $element.find("[data-field=item-text]").val();
+            $element.find("[data-field=item-text]").val('');
+
+            this.data.items.push(data);
+            data.id = this.data.items.length - 1;
+            this.render(data);
+
+        },
+
+        render: function(obj){
+            this.$div.append(mustache.render("form-argument", obj));
+        },
+
+        save: function(){
+            this.data.tags = $("[data-field=item-tags]").val().split(", ");
+            this.data.name = $("[data-field=item-name]").val();
+            this.data["change_reason"] = $("[data-field=item-change-reason]").val();
+            var page = $("#page-data").data("object");
+            this.data.id = page["_id"]["$oid"];
+            console.log(this.data); 
+            var resp = ajax.request("/howto/edit", "POST", this.data);
+            console.log(resp);
+            window.location = "/howto/"+resp.content.slug;
         },
 
 
@@ -300,6 +441,7 @@
 
     var page_view = {
         init: function(){
+            $("[data-page=edit]").data("steps");
 
         },
         bind: function(){
@@ -325,6 +467,9 @@
         }
     }
 
+
+
+
     $document.ready(function () {
 
         ajax.init();
@@ -333,8 +478,8 @@
                       "#Modal", 
                       "modal");
         mustache.bind();
-        page_form.init("#arguments");
-        page_form.bind();
+        page_create_form.init("#arguments");
+        page_edit_form.init("#arguments");
         page_view.init();
         page_view.bind();
 

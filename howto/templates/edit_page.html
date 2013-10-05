@@ -1,8 +1,7 @@
 {% extends "site_base.html" %}
 {% block title %}create{% endblock %}
 {% block main_content %}
-<div id="page-data" data-page="create"></div>
-
+<div id="page-data" data-page="edit" data-object="{{ page.json }}"></div>
 <form role="form">
   <div class="form-group">
     <label for="name">Name</label>
@@ -31,6 +30,11 @@
 		</div>
 
 	</div>
+
+  <div class="form-group">
+    <label for="tags">Änderungsgrund</label>
+    <textarea data-field="item-change-reason" type="text" class="form-control" id="change-reason" placeholder=""></textarea> 
+  </div>
 
 
   <a data-action="save-page" class="btn btn-default">Submit</a>

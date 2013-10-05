@@ -9,7 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.template.defaultfilters import slugify
 from django.views.decorators.http import require_http_methods
 import json
-
+from bson.json_util import dumps
+from bson import ObjectId
 
 
 @login_required
@@ -28,6 +29,17 @@ def view(request, slug):
 
     return TemplateResponse(request, 'page.html', {'page': page})
 
+def edit_page_view(request, slug):
+    db = get_database()
+    page = db.pages.find_one({"slug": slug})
+    if page is None:
+        raise Http404
+
+    page["json"] = dumps(page)
+
+
+    return TemplateResponse(request, 'edit_page.html', {'page': page})
+
 @login_required
 @require_http_methods(["POST"])
 def create_page(request):
@@ -42,7 +54,19 @@ def create_page(request):
         resp = {'status': 'error', 'message': "Unable to parse json"}
         return HttpResponse(json.dumps(resp), content_type='application/json', status=400)
 
+    if "items" not in post_data:
+        resp = {"status": "error", "message": "need param 'items'"}
+        return HttpResponse(json.dumps(resp), content_type='application/json', status=400)
+    elif "tags" not in post_data:
+        resp = {"status": "error", "message": "need param 'tags'"}
+        return HttpResponse(json.dumps(resp), content_type='application/json', status=400)
+    elif "name" not in post_data:
+        resp = {"status": "error", "message": "need param 'name'"}
+        return HttpResponse(json.dumps(resp), content_type='application/json', status=400)
+
+
     post_data["slug"] = slugify(post_data["name"])
+    post_data["user"] = request.user.id
     db.pages.save(post_data)
 
     resp = {
@@ -67,15 +91,48 @@ def edit_page(request):
         resp = {'status': 'error', 'message': "Unable to parse json"}
         return HttpResponse(json.dumps(resp), content_type='application/json', status=400)
 
-    post_data["id"]
-    db.pages.save(post_data)
 
+    if "id" not in post_data:
+        resp = {"status": "error", "message": "need param id"}
+        return HttpResponse(json.dumps(resp), content_type='application/json', status=400)
+
+    page = db.pages.find_one({"_id": ObjectId(post_data["id"])})
+
+    if page is None:
+        resp = {"status": "error", "message": "howto not found"}
+        return HttpResponse(json.dumps(resp), content_type='application/json', status=404)
+
+    if "items" not in post_data:
+        resp = {"status": "error", "message": "need param 'items'"}
+        return HttpResponse(json.dumps(resp), content_type='application/json', status=400)
+    elif "tags" not in post_data:
+        resp = {"status": "error", "message": "need param 'tags'"}
+        return HttpResponse(json.dumps(resp), content_type='application/json', status=400)
+    elif "change_reason" not in post_data:
+        resp = {"status": "error", "message": "need param 'change_reason'"}
+        return HttpResponse(json.dumps(resp), content_type='application/json', status=400)
+
+
+    page_revision = page
+    page_revision["change_reason"] = post_data["change_reason"]
+    page_revision["page_id"] = page_revision["_id"]
+    del page_revision["_id"]
+    db.pages.revisions.save(page)
+
+    del page["change_reason"]
+    page["items"] = post_data["items"]
+    page["tags"] = post_data["tags"]
+    page["user"] = request.user.id
+    page["_id"] = ObjectId(post_data["id"])
+
+    db.pages.save(page)
     resp = {
         'status': 'ok',
         'message': 'Saved... Thanks!',
-        'slug': post_data["slug"]
+        'slug': page["slug"],
+        "data": page
     }
-    return HttpResponse(json.dumps(resp), content_type='application/json')
+    return HttpResponse(dumps(resp), content_type='application/json')
 
 
 
